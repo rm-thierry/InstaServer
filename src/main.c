@@ -7,10 +7,20 @@
 
 int main(void) {
     struct Terminal term;
+    char os[256];
     int highlight = 1;
     int choice = 0;
     int key;
-    
+
+    // Get the OS
+    system("echo $(uname) > os.txt");
+    FILE *file = fopen("os.txt", "r");
+    fscanf(file, "%s", os);
+    fclose(file);
+    system("rm os.txt");
+
+    printf("OS: %s\n", os);
+
     terminal_setup(&term);
     
     while (1) {

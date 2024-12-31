@@ -65,35 +65,42 @@ void server_setup_perform(void) {
 
 void custom_configs(void) {
     printf("Configuring VIM...\n");
-    
+
     const char* home = getenv("HOME");
     if (!home) {
         printf("✗ Could not get HOME directory\n");
         return;
     }
-    const char* vimrc_content = 
-        "syntax on\n"
-        "set number\n"
-        "set autoindent\n"
-        "set tabstop=4\n"
-        "set shiftwidth=4\n"
-        "set expandtab\n"
-        "set ruler\n";
+
+    const char* vimrc_file_path = "../utils/.vimrc";
+
+    FILE *vimrc_file = fopen(vimrc_file_path, "r");
+    if (!vimrc_file) {
+        printf("✗ Could not open the vimrc file: %s\n", vimrc_file_path);
+        return;
+    }
 
     char vimrc_path[1024];
     size_t result = (size_t)snprintf(vimrc_path, sizeof(vimrc_path), "%s/.vimrc", home);
     if (result >= sizeof(vimrc_path)) {
         printf("✗ Path too long\n");
+        fclose(vimrc_file);
         return;
     }
 
     FILE* fp = fopen(vimrc_path, "w");
     if (!fp) {
         printf("✗ Could not create .vimrc\n");
+        fclose(vimrc_file);
         return;
     }
-    
-    fprintf(fp, "%s", vimrc_content);
+
+    char buffer[1024];
+    while (fgets(buffer, sizeof(buffer), vimrc_file)) {
+        fputs(buffer, fp);
+    }
+
+    fclose(vimrc_file);
     fclose(fp);
 
     if (access(vimrc_path, F_OK) == 0) {
@@ -102,6 +109,8 @@ void custom_configs(void) {
         printf("✗ Failed to configure VIM\n");
     }
 }
+
+
 
 
 void server_setup_wait_for_enter(void) {
