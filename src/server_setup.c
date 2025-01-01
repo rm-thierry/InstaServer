@@ -72,7 +72,7 @@ void custom_configs(void) {
         return;
     }
 
-    const char* vimrc_file_path = "../utils/.vimrc";
+    const char* vimrc_file_path = "../utils/vimrc";
 
     FILE *vimrc_file = fopen(vimrc_file_path, "r");
     if (!vimrc_file) {

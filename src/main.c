@@ -4,23 +4,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 int main(void) {
     struct Terminal term;
-    char os[256];
+    char os[256] = "Unknown OS";
     int highlight = 1;
     int choice = 0;
     int key;
 
-    // Get the OS
-    system("echo $(uname) > os.txt");
+    // OS-Information abrufen
+    system("lsb_release -d | cut -f2- > os.txt");
+
     FILE *file = fopen("os.txt", "r");
-    fscanf(file, "%s", os);
-    fclose(file);
-    system("rm os.txt");
+    if (file) {
+        if (fgets(os, sizeof(os), file)) {
+            os[strcspn(os, "\n")] = '\0';
+        }
+        fclose(file);
+        system("rm os.txt");
+    } else {
+        fprintf(stderr, "Failed to retrieve OS information.\n");
+    }
 
     printf("OS: %s\n", os);
-
+    sleep(2);
     terminal_setup(&term);
     
     while (1) {
