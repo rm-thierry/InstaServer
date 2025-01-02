@@ -131,5 +131,7 @@ void custom_configs(void) {
 
 void server_setup_wait_for_enter(void) {
     printf("\nPress Enter to continue...");
-    getchar();
+    fflush(stdout);
+    while (getchar() != '\n');
 }
+
