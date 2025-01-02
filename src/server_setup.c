@@ -72,35 +72,52 @@ void custom_configs(void) {
         return;
     }
 
-    const char* vimrc_file_path = "../utils/vimrc";
 
-    FILE *vimrc_file = fopen(vimrc_file_path, "r");
-    if (!vimrc_file) {
-        printf("✗ Could not open the vimrc file: %s\n", vimrc_file_path);
-        return;
-    }
+    //VIM configuration
+    //This Config is hard coded. I want to make it dynamic in future.
+    const char* vimrc_content =
+        "syntax on\n"
+        "set number\n"
+        "set autoindent\n"
+        "set tabstop=4\n"
+        "set shiftwidth=4\n"
+        "set expandtab\n"
+        "set smartindent\n"
+        "set hlsearch\n"
+        "set incsearch\n"
+        "set ignorecase\n"
+        "set smartcase\n"
+        "set backspace=indent,eol,start\n"
+        "set history=1000\n"
+        "set undolevels=1000\n"
+        "set undoreload=10000\n"
+        "set laststatus=2\n"
+        "set statusline=%F%m%r%h%w[%L][%{&ff}]\n"
+        "set mouse=a\n"
+        "set clipboard=unnamedplus\n"
+        "set background=dark\n"
+        "colorscheme desert\n"
+        "set t_Co=256\n"
+        "set encoding=utf-8\n"
+        "set fileencoding=utf-8\n"
+        "set termencoding=utf-8\n"
+        "set listchars=tab:▸\\ ,eol:¬,trail:•,extends:>,precedes:<,nbsp:.\n"
+        "set list\n";
 
     char vimrc_path[1024];
     size_t result = (size_t)snprintf(vimrc_path, sizeof(vimrc_path), "%s/.vimrc", home);
     if (result >= sizeof(vimrc_path)) {
         printf("✗ Path too long\n");
-        fclose(vimrc_file);
         return;
     }
 
     FILE* fp = fopen(vimrc_path, "w");
     if (!fp) {
         printf("✗ Could not create .vimrc\n");
-        fclose(vimrc_file);
         return;
     }
 
-    char buffer[1024];
-    while (fgets(buffer, sizeof(buffer), vimrc_file)) {
-        fputs(buffer, fp);
-    }
-
-    fclose(vimrc_file);
+    fprintf(fp, "%s", vimrc_content);
     fclose(fp);
 
     if (access(vimrc_path, F_OK) == 0) {
@@ -109,7 +126,6 @@ void custom_configs(void) {
         printf("✗ Failed to configure VIM\n");
     }
 }
-
 
 
 
